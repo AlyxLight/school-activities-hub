@@ -182,28 +182,24 @@
 
 # Связи между сущностями
 
-```text
-Пользователь 1 — 0..1 Ученик
-Пользователь 1 — 0..1 Учитель
-Пользователь 1 — 0..1 Родитель
+erDiagram
+    USER ||--o| STUDENT : is
+    USER ||--o| TEACHER : is
+    USER ||--o| PARENT : is
 
-Класс 1 — 0..N Ученик
-Класс 1 — 0..N Занятие
+    CLASS ||--o{ STUDENT : contains
+    CLASS ||--o{ ACTIVITY : target_for
 
-Родитель M — N Ученик
-через таблицу Ученик_Родитель
+    TEACHER ||--o{ ACTIVITY : creates
+    SUBJECT ||--o{ ACTIVITY : assigned_to
 
-Учитель 1 — 0..N Занятие
+    STUDENT ||--o{ ENROLLMENT : creates
+    ACTIVITY ||--o{ ENROLLMENT : has
 
-Предмет 1 — 0..N Занятие
+    STUDENT ||--o{ STUDENT_PARENT : has
+    PARENT ||--o{ STUDENT_PARENT : has
 
-Занятие 1 — 0..N Запись_на_занятие
-
-Ученик 1 — 0..N Запись_на_занятие
-
-Пользователь 1 — 0..N Уведомление
-
-Занятие 1 — 0..N Уведомление
-```
+    USER ||--o{ NOTIFICATION : receives
+    ACTIVITY ||--o{ NOTIFICATION : generates
 
 ---

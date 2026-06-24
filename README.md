@@ -119,14 +119,14 @@ school-activities-hub/
 │   └── enrollment_sequence.md
 │
 └── 07_ui_prototype/
-    ├── screens.md
-    └── user_flows.md
+    └── screens.md
 ```
 
 ## Инструменты
 
 * Miro — User Story Map, BPMN
-* Draw.io — ERD, Sequence Diagram
+* Mermaid — ERD, Sequence Diagram
+* Draw.io — экспорт диаграмм в PNG при необходимости
 * Swagger Editor — OpenAPI
 * Figma — UI-прототип
 * GitHub — хранение и презентация проекта

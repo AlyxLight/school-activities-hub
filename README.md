@@ -103,8 +103,9 @@ school-activities-hub/
 │   └── business_rules.md
 │
 ├── 03_processes/
-│   ├── bpmn_as_is.md
-│   └── bpmn_to_be.md
+│   ├── process_description.md
+│   ├── bpmn_as_is.png
+│   └── bpmn_to_be.png
 │
 ├── 04_data_model/
 │   ├── erd.md

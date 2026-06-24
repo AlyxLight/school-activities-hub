@@ -1,4 +1,3 @@
-```yaml
 openapi: 3.0.0
 
 info:
@@ -526,4 +525,3 @@ components:
         message:
           type: string
           example: Занятие не найдено
-```

@@ -1,0 +1,529 @@
+```yaml
+openapi: 3.0.0
+
+info:
+  title: School Activities Hub API
+  version: 1.0.0
+  description: API для управления школьными дополнительными занятиями и записями учеников.
+
+servers:
+  - url: https://api.school-activities-hub.example.com/v1
+
+tags:
+  - name: Activities
+    description: Операции с занятиями
+  - name: Enrollments
+    description: Операции с записями на занятия
+
+paths:
+  /activities:
+    get:
+      tags:
+        - Activities
+      summary: Получить список занятий
+      parameters:
+        - name: subjectId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: classId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: dateFrom
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Список занятий получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityListResponse'
+
+    post:
+      tags:
+        - Activities
+      summary: Создать занятие
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityRequest'
+      responses:
+        '201':
+          description: Занятие создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityStatusResponse'
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /activities/{activityId}:
+    get:
+      tags:
+        - Activities
+      summary: Получить карточку занятия
+      parameters:
+        - $ref: '#/components/parameters/ActivityId'
+      responses:
+        '200':
+          description: Карточка занятия получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityDetails'
+        '404':
+          description: Занятие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags:
+        - Activities
+      summary: Изменить занятие
+      parameters:
+        - $ref: '#/components/parameters/ActivityId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateActivityRequest'
+      responses:
+        '200':
+          description: Занятие обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityStatusResponse'
+        '400':
+          description: Некорректные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Занятие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Конфликт бизнес-правил
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /activities/{activityId}/cancel:
+    patch:
+      tags:
+        - Activities
+      summary: Отменить занятие
+      parameters:
+        - $ref: '#/components/parameters/ActivityId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelActivityRequest'
+      responses:
+        '200':
+          description: Занятие отменено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityStatusResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Занятие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Занятие уже отменено или завершено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /activities/{activityId}/enrollments:
+    post:
+      tags:
+        - Enrollments
+      summary: Записаться на занятие
+      parameters:
+        - $ref: '#/components/parameters/ActivityId'
+      responses:
+        '201':
+          description: Запись создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+        '403':
+          description: Пользователь не является учеником
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Занятие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Невозможно записаться на занятие
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /activities/{activityId}/participants:
+    get:
+      tags:
+        - Activities
+      summary: Получить список участников занятия
+      parameters:
+        - $ref: '#/components/parameters/ActivityId'
+      responses:
+        '200':
+          description: Список участников получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantsResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Занятие не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /enrollments/{enrollmentId}:
+    delete:
+      tags:
+        - Enrollments
+      summary: Отменить запись на занятие
+      parameters:
+        - $ref: '#/components/parameters/EnrollmentId'
+      responses:
+        '200':
+          description: Запись отменена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentCancelResponse'
+        '403':
+          description: Недостаточно прав
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Запись не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Запись уже отменена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /students/me/enrollments:
+    get:
+      tags:
+        - Enrollments
+      summary: Получить мои записи
+      responses:
+        '200':
+          description: Список записей ученика получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyEnrollmentsResponse'
+
+components:
+  parameters:
+    ActivityId:
+      name: activityId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    EnrollmentId:
+      name: enrollmentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    ActivityListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityListItem'
+
+    ActivityListItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Консультация по ОГЭ
+        subject:
+          type: string
+          example: Английский язык
+        className:
+          type: string
+          example: 9Б
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+          example: "15:30"
+        endTime:
+          type: string
+          example: "16:15"
+        availablePlaces:
+          type: integer
+          example: 4
+        status:
+          $ref: '#/components/schemas/ActivityStatus'
+
+    ActivityDetails:
+      allOf:
+        - $ref: '#/components/schemas/ActivityListItem'
+        - type: object
+          properties:
+            description:
+              type: string
+              example: Разбор задания 35 письменной части
+            teacherName:
+              type: string
+              example: Иванов Иван Иванович
+            participantLimit:
+              type: integer
+              example: 15
+
+    CreateActivityRequest:
+      type: object
+      required:
+        - title
+        - subjectId
+        - classId
+        - date
+        - startTime
+        - endTime
+        - participantLimit
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        subjectId:
+          type: string
+          format: uuid
+        classId:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+          example: "15:30"
+        endTime:
+          type: string
+          example: "16:15"
+        participantLimit:
+          type: integer
+          minimum: 1
+          example: 15
+
+    UpdateActivityRequest:
+      allOf:
+        - $ref: '#/components/schemas/CreateActivityRequest'
+
+    CancelActivityRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          example: Учитель заболел
+
+    ActivityStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/ActivityStatus'
+
+    EnrollmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        activityId:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/EnrollmentStatus'
+        enrolledAt:
+          type: string
+          format: date-time
+
+    EnrollmentCancelResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/EnrollmentStatus'
+
+    MyEnrollmentsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MyEnrollmentItem'
+
+    MyEnrollmentItem:
+      type: object
+      properties:
+        enrollmentId:
+          type: string
+          format: uuid
+        activityId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        subject:
+          type: string
+        date:
+          type: string
+          format: date
+        startTime:
+          type: string
+        endTime:
+          type: string
+        status:
+          $ref: '#/components/schemas/EnrollmentStatus'
+
+    ParticipantsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+
+    Participant:
+      type: object
+      properties:
+        studentId:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+          example: Петров Пётр
+        className:
+          type: string
+          example: 9Б
+        enrolledAt:
+          type: string
+          format: date-time
+
+    ActivityStatus:
+      type: string
+      enum:
+        - draft
+        - published
+        - cancelled
+        - completed
+
+    EnrollmentStatus:
+      type: string
+      enum:
+        - active
+        - cancelled
+        - attended
+        - missed
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: ACTIVITY_NOT_FOUND
+        message:
+          type: string
+          example: Занятие не найдено
+```

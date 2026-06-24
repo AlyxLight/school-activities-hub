@@ -180,28 +180,39 @@
 
 ---
 
-# Связи между сущностями
+# Mermaid-представление связей
 
 ```mermaid
-erDiagram
-    USER ||--o| STUDENT : is
-    USER ||--o| TEACHER : is
-    USER ||--o| PARENT : is
+flowchart LR
+    USER[Пользователь]
+    STUDENT[Ученик]
+    TEACHER[Учитель]
+    PARENT[Родитель]
+    CLASS[Класс]
+    SUBJECT[Предмет]
+    ACTIVITY[Занятие]
+    ENROLLMENT[Запись на занятие]
+    STUDENT_PARENT[Ученик_Родитель]
+    NOTIFICATION[Уведомление]
 
-    CLASS ||--o{ STUDENT : contains
-    CLASS ||--o{ ACTIVITY : target_for
+    USER -->|1 к 0..1| STUDENT
+    USER -->|1 к 0..1| TEACHER
+    USER -->|1 к 0..1| PARENT
 
-    TEACHER ||--o{ ACTIVITY : creates
-    SUBJECT ||--o{ ACTIVITY : assigned_to
+    CLASS -->|1 к 0..N| STUDENT
+    CLASS -->|1 к 0..N| ACTIVITY
 
-    STUDENT ||--o{ ENROLLMENT : creates
-    ACTIVITY ||--o{ ENROLLMENT : has
+    TEACHER -->|1 к 0..N| ACTIVITY
+    SUBJECT -->|1 к 0..N| ACTIVITY
 
-    STUDENT ||--o{ STUDENT_PARENT : has
-    PARENT ||--o{ STUDENT_PARENT : has
+    STUDENT -->|1 к 0..N| ENROLLMENT
+    ACTIVITY -->|1 к 0..N| ENROLLMENT
 
-    USER ||--o{ NOTIFICATION : receives
-    ACTIVITY ||--o{ NOTIFICATION : generates
+    STUDENT -->|1 к 0..N| STUDENT_PARENT
+    PARENT -->|1 к 0..N| STUDENT_PARENT
+
+    USER -->|1 к 0..N| NOTIFICATION
+    ACTIVITY -->|1 к 0..N| NOTIFICATION
 ```
 
 ---

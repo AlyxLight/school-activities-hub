@@ -121,7 +121,7 @@ school-activities-hub/
 └── 07_ui_prototype/
     ├── screens.md
     └── user_flows.md
-````
+```
 
 ## Инструменты
 

@@ -182,6 +182,7 @@
 
 # Связи между сущностями
 
+```mermaid
 erDiagram
     USER ||--o| STUDENT : is
     USER ||--o| TEACHER : is
@@ -201,5 +202,6 @@ erDiagram
 
     USER ||--o{ NOTIFICATION : receives
     ACTIVITY ||--o{ NOTIFICATION : generates
+```
 
 ---

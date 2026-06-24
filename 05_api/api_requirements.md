@@ -28,15 +28,16 @@ GET /activities
 ### Фильтры
 
 ```text
-subject
-class
-date
+subjectId
+classId
+dateFrom
+dateTo
 ```
 
 Пример:
 
 ```http
-GET /activities?subject=english&class=9
+GET /activities?subjectId=uuid&classId=uuid&dateFrom=2026-09-01&dateTo=2026-09-30
 ```
 
 ---
